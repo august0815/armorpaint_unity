@@ -15,15 +15,22 @@ public class ArmorPaint {
 		sb.Append(string.Format("o {0}\n", name));
 
 		foreach(Vector3 v in m.vertices) {
-			sb.Append(string.Format("v {0} {1} {2}\n", v.x, v.y, v.z));
+			string nummer1=string.Format("v {0} {1} {2}\n",v.x,v.y,v.z);
+			string nummer = nummer1.Replace(",", ".");
+			sb.Append(nummer);
+
 		}
 
 		foreach(Vector3 v in m.normals) {
-			sb.Append(string.Format("vn {0} {1} {2}\n",v.x, v.y, v.z));
+			string nummer1=string.Format("vn {0} {1} {2}\n",v.x, v.y, v.z);
+			string nummer = nummer1.Replace(",", ".");
+			sb.Append(nummer);
 		}
 
 		foreach(Vector3 v in m.uv) {
-			sb.Append(string.Format("vt {0} {1}\n", v.x, v.y));
+			string nummer1=string.Format("vt {0} {1}\n", v.x, v.y);
+			string nummer = nummer1.Replace(",", ".");
+			sb.Append(nummer);
 		}
 
 		for (int material = 0; material < m.subMeshCount; material++) {
@@ -47,14 +54,22 @@ public class ArmorPaint {
 		if (mf == null) return;
 
 		string path;
+		string binpath;
 		if (!EditorPrefs.HasKey("ArmorPaintPath")) {
 			path = ArmorPaintPathOption();
 		}
 		else {
 			path = EditorPrefs.GetString("ArmorPaintPath");
 		}
+		if (!EditorPrefs.HasKey("ArmorPaintBinPath")) {
+			binpath = ArmorPaintPathBinOption();
+		}
+		else {
+			binpath = EditorPrefs.GetString("ArmorPaintBinPath");
+		}
+		
 		string filepath = path + "/data/temp.obj";
-		string binpath = path + "/ArmorPaint" + GetBinaryExtension();
+		binpath =binpath + "/ArmorPaint";
 
 		using (StreamWriter sw = new StreamWriter(filepath)) {
 			sw.Write(MeshToObj(mf, name));
@@ -65,11 +80,16 @@ public class ArmorPaint {
 
 	[MenuItem("ArmorPaint/Set Path")]
 	private static string ArmorPaintPathOption() {
-		string path = EditorUtility.OpenFolderPanel("Select folder where ArmorPaint is located", "", "");
+		string path = EditorUtility.OpenFolderPanel("Select workspace", "", "");
 		EditorPrefs.SetString("ArmorPaintPath", path);
 		return path;
 	}
-
+	[MenuItem("ArmorPaint/Set BinPath")]
+	private static string ArmorPaintPathBinOption() {
+		string path = EditorUtility.OpenFolderPanel("Select folder where ArmorPaint is located", "", "");
+		EditorPrefs.SetString("ArmorPaintBinPath", path);
+		return path;
+	}
 	private static string GetBinaryExtension() {
 		if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows) {
 			return ".exe";
